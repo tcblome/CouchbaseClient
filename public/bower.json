@@ -1,0 +1,29 @@
+{
+  "name": "orchestrateClient",
+  "authors": [
+    "Dave Moorhem <dave.moorhem@ctl.io>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-diff-match-patch": "^0.2.2",
+    "angular": "angularjs#~1.5.3",
+    "angular-bootstrap": "^1.3.2",
+    "angular-touch": "^1.5.3",
+    "angular-animate": "^1.5.3",
+    "ng-busy": "^0.2.0",
+    "angular-ui-ace": "bower",
+    "ngstorage": "^0.3.10",
+    "font-awesome": "fontawesome#^4.6.1",
+    "angular-confirm-modal": "^1.2.3"
+  }
+}

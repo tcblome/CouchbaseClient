@@ -1,0 +1,163 @@
+<html ng-app="aoc">
+<head>
+<!-- META -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Couchbase Updater</title>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+<link rel="stylesheet" href="css/aoc.css">
+<link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
+
+<script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
+<script type="text/javascript" src="bower_components/angular-animate/angular-animate.min.js"></script>
+<script type="text/javascript" src="bower_components/angular-touch/angular-touch.min.js"></script>
+<script type="text/javascript" src="bower_components/google-diff-match-patch/diff_match_patch.js"></script>
+<script type="text/javascript" src="bower_components/angular-diff-match-patch/angular-diff-match-patch.js"></script>
+<script type="text/javascript" src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+<script type="text/javascript" src="bower_components/ng-busy/build/angular-busy.min.js"></script>
+<script type="text/javascript" src="bower_components/ace-builds/src-min-noconflict/ace.js"></script>
+<script type="text/javascript" src="bower_components/angular-ui-ace/ui-ace.js"></script>
+<script type="text/javascript" src="bower_components/ngstorage/ngstorage.min.js"></script>
+<script type="text/javascript" src="bower_components/angular-confirm-modal/angular-confirm.min.js"></script>
+
+<script src="js/aoc.js"></script>
+<script src="js/controllers/main.js"></script>
+</head>
+
+<body ng-controller="main">
+	<div class="page-container">
+
+		<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+			<div class="container">
+				<div class="navbar-header">
+					<!--
+					<button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target=".sidebar-nav">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>  
+					-->
+					<h3>Couchbase Updater</h3>
+				</div>
+			</div>
+		</div>
+
+		<div class="container">
+			<div class="row row-offcanvas row-offcanvas-left">
+
+				<!-- main area -->
+				<div class="col-xs-12">
+					<br />
+					<div class="panel panel-primary">
+						<div class="panel-heading" ng-click="isInputCollapsed = !isInputCollapsed">
+							Input
+							<div class="pull-right">
+								<i class="glyphicon glyphicon-chevron-down" ng-class="{'glyphicon-chevron-right': isInputCollapsed, 'glyphicon-chevron-down': !isInputCollapsed}"></i>
+							</div>
+						</div>
+						<div class="panel-body" uib-collapse="isInputCollapsed">
+							<form ng-show="!isHistory">
+								<fieldset class="form-group">
+									<label for="apiKey">Couchbase Server</label>
+									<input type="text" class="form-control" ng-model="server" id="apiKey" placeholder="server ip address" required>
+								</fieldset>
+
+								<div class="row">
+									<fieldset class="form-group col-xs-6">
+										<label for="apiKey">Bucket</label>
+										<input type="text" class="form-control" ng-model="bucket" id="apiKey" placeholder="bucket" required>
+									</fieldset>
+
+									<fieldset class="form-group col-xs-6">
+										<label for="apiKey">Bucket Password</label>
+										<input type="password" class="form-control" ng-model="password" id="apiKey" placeholder="password" required>
+									</fieldset>
+								</div>
+
+								<fieldset class="form-group">
+									<label for="collection">Collection</label>
+									<input type="text" class="form-control" ng-model="collection" id="collection" placeholder="collection" required>
+								</fieldset>
+
+								<fieldset class="form-group">
+									<label for="query">Query</label>
+									<pre>SELECT *, meta() AS `path` FROM `{{bucket}}` WHERE _collection="{{collection}}" AND </pre>
+									<input type="text" class="form-control" ng-model="query" id="query" placeholder="query" required>
+								</fieldset>
+
+								<fieldset class="form-group">
+									<label for="mapFunction">Map Function</label>
+									<pre>//map function should return a single value that will become the updated value for the record
+response.body.results.map(function(id, value) {</pre>
+
+									<div ui-ace="{
+										  useWrapMode : true,
+										  showGutter: true,
+										  theme:'gruvbox',
+										  mode: 'javascript'
+										}" ng-model="mapFunction"></div>
+									<p>
+									<pre>});</pre>
+									</p>
+								</fieldset>
+							</form>
+
+							<table class="table .table-condensed" ng-show="isHistory">
+								<tr>
+									<th>Server</th>
+									<th>Bucket</th>
+									<th>Collection</th>
+									<th>Query</th>
+									<th>Map Function</th>
+									<th></th>
+								</tr>
+								<tr ng-repeat="story in history">
+									<td> <code>{{story.s}}</code> </td>
+									<td> <code>{{story.b}}</code> </td>
+									<td> <code>{{story.c}}</code> </td>
+									<td> <code>{{story.q}}</code> </td>
+									<td> <code>{{story.f}}</code> </td>
+									<td>
+										<button uib-tooltip="select" ng-click="fromHistory(story)" type="button" class="btn btn-sm btn-primary">
+											<i class="fa fa-check" aria-hidden="true"></i>
+										</button>
+										<button uib-tooltip="delete" ng-click="deleteHistory($index)" type="button" class="btn btn-sm btn-danger">
+											<i class="fa fa-trash-o" aria-hidden="true"></i>
+										</button>
+									</td>
+								</tr>
+							</table>
+
+							<button ng-show="!isHistory" type="button" ng-click="preview()" class="btn btn-sm btn-primary" value="preview" busy not-busy-remove-classes="disabled" busy-add-classes="disabled">Preview</button>
+							<button ng-show="!isHistory" ng-click="isHistory = !isHistory" type="button" class="btn btn-sm btn-primary pull-right">
+								<i class="fa fa-history fa-lg" aria-hidden="true"></i> History 
+							</button>
+							<button ng-show="isHistory" ng-click="isHistory = !isHistory" type="button" class="btn btn-sm btn-primary pull-right">Close</button>
+						</div>
+					</div>
+
+					<div class="panel panel-primary" ng-show="isPreview">
+						<div class="panel-heading" ng-click="isPreviewCollapsed = !isPreviewCollapsed">
+							Preview
+							<div class="pull-right">
+								<i class="glyphicon glyphicon-chevron-down" ng-class="{'glyphicon-chevron-right': isPreviewCollapsed, 'glyphicon-chevron-down': !isPreviewCollapsed}"></i>
+							</div>
+						</div>
+						<div class="panel-body" uib-collapse="isPreviewCollapsed">
+							<p>{{count}} record(s) will be modified</p>
+							<div class="diffs">
+								<div ng-repeat="diff in diffs">
+									<pre class="diff" semantic-diff left-obj="diff.before" right-obj="diff.after" options="options"> </pre>
+								</div>
+							</div>
+							<button ng-show="count > 0" type="button" ng-click="apply()" class="btn btn-sm btn-success margin-top" value="submit" busy not-busy-remove-classes="disabled" busy-add-classes="disabled">Submit</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

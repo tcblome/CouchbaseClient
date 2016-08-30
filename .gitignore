@@ -1,0 +1,47 @@
+*.pydevproject
+.sass-cache/
+.metadata
+.gradle
+bin/
+tmp/
+target/
+node_modules/
+public/bower_components
+components/
+dist/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+
+# Eclipse Core
+.project
+
+# External tool builders
+.externalToolBuilders/
+
+# Locally stored "Eclipse launch configurations"
+*.launch
+
+# CDT-specific
+.cproject
+
+# JDT-specific (Eclipse Java Development Tools)
+.classpath
+
+# PDT-specific
+.buildpath
+
+# sbteclipse plugin
+.target
+
+# TeXlipse plugin
+.texlipse
+setsysvar_linux
+logs/
+*.log
+buildinfo.properties
+

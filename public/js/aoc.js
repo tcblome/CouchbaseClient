@@ -1,0 +1,1 @@
+var aoc = angular.module('aoc', ['ngAnimate', 'diff-match-patch', 'ui.bootstrap', 'ngBusy', 'ui.ace', 'ngStorage', 'angular-confirm']);

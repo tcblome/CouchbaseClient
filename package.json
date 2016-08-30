@@ -1,0 +1,18 @@
+{
+  "name": "advanced_client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "couchbase": "^2.2.2",
+    "express": "^4.13.4",
+    "http": "0.0.0",
+    "kew": "^0.7.0"
+  }
+}
